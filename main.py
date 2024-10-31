@@ -105,7 +105,7 @@ map=pd.DataFrame(map,index=[0])
 present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
 num_gameweek=present_fixtures['event'].min()
 
-with open('data/data.json', 'r') as file:
+with open('data.json', 'r') as file:
     data = json.load(file)
 old_stats=pd.DataFrame(data['elements'])
 new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
