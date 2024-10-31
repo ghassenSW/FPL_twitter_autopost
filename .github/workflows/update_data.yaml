@@ -1,0 +1,28 @@
+name: Fetch data
+
+on:
+  workflow_run:
+    workflows: ["fetch injuries"]  # Matches the name of the first workflow
+    types:
+      - completed 
+
+jobs:
+  fetch-process-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch Data from API
+        run: |
+          API_URL="https://fantasy.premierleague.com/api/bootstrap-static/"
+          curl -s "$API_URL" -o data.json
+
+      - name: Commit and Push Data File
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "Add API data file"
+          git push origin main  # Replace `main` with your branch name if different
