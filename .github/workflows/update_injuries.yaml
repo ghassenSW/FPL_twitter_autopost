@@ -1,4 +1,4 @@
-name: fetch injuries
+name: injury updates
 
 on:
   schedule:
