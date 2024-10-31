@@ -166,8 +166,9 @@ while True:
     current_time=datetime.now()
     print(current_time)
 
-    difference = pd.concat([new, old]).drop_duplicates(keep=False)
-
+    unique_to_new = pd.concat([old, new]).drop_duplicates(keep=False)
+    difference = unique_to_new[~unique_to_new.isin(old)].dropna()
+  
     if len(difference)>0:
       post(difference)
       print('posted a price change at this day')
