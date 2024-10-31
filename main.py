@@ -4,6 +4,7 @@ import pandas as pd
 import tweepy
 import time
 from datetime import datetime
+import json
 
 def url_to_df(url,key=None):
   response = requests.get(url)
@@ -101,27 +102,26 @@ def post(tweet_text):
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
 map=dict(zip(teams['id'],teams['name']))
 map=pd.DataFrame(map,index=[0])
+present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
+num_gameweek=present_fixtures['event'].min()
 
+with open('data/data.json', 'r') as file:
+    data = json.load(file)
+old_stats=pd.DataFrame(data['elements'])
 new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
-while True:
-    present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
-    num_gameweek=present_fixtures['event'].min()
-    old_stats=new_stats
-    old=prepare(old_stats)
-    time.sleep(900)
-    new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
-    new=prepare(new_stats)
-    
-    conditions=new[['chance_of_playing_next_round','news']]!=old[['chance_of_playing_next_round','news']]
-    first_condition=new[conditions['chance_of_playing_next_round']]
-    second_condition=new[conditions['news']]
-    players = pd.concat([first_condition, second_condition], axis=0, ignore_index=True)
-    players = players.drop_duplicates()
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+old=prepare(old_stats)
+new=prepare(new_stats)
 
-    if len(players)>0:
-        tweet_text=df_to_text(players,num_gameweek)
-        post(tweet_text)
-        print(f'posted an update at {current_time}')
-    else:
-        print(f'theres no post at {current_time}')
+conditions=new[['chance_of_playing_next_round','news']]!=old[['chance_of_playing_next_round','news']]
+first_condition=new[conditions['chance_of_playing_next_round']]
+second_condition=new[conditions['news']]
+players = pd.concat([first_condition, second_condition], axis=0, ignore_index=True)
+players = players.drop_duplicates()
+current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+if len(players)>0:
+    tweet_text=df_to_text(players,num_gameweek)
+    post(tweet_text)
+    print(f'posted an update at {current_time}')
+else:
+    print(f'theres no post at {current_time}')
