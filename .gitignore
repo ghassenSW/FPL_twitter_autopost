@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+
+# Environment variables (API keys, tokens, etc.)
+.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Sensitive data (API credentials included directly in code)
+*.pem  # if you have any certificates
+
+# System and editor-specific files (optional)
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
