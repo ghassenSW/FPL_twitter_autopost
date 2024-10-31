@@ -1,5 +1,3 @@
-# you need to fix when the gw changes it gives the price change of the whole gw
-
 import requests
 import numpy as np
 import pandas as pd
