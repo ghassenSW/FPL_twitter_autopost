@@ -22,24 +22,24 @@ jobs:
           API_URL="https://fantasy.premierleague.com/api/bootstrap-static/"
           curl -s "$API_URL" -o new_data.json
 
-      # - name: Compare Data
-      #   id: compare_data
-      #   run: |
-      #     # Generate hashes of both files
-      #     NEW_DATA_HASH=$(sha256sum new_data.json | awk '{ print $1 }')
-      #     EXISTING_DATA_HASH=$(sha256sum data.json | awk '{ print $1 }' || echo "")
+      - name: Compare Data
+        id: compare_data
+        run: |
+          # Generate hashes of both files
+          NEW_DATA_HASH=$(sha256sum new_data.json | awk '{ print $1 }')
+          EXISTING_DATA_HASH=$(sha256sum data.json | awk '{ print $1 }' || echo "")
 
-      #     # Check if hashes differ
-      #     if [[ "$NEW_DATA_HASH" != "$EXISTING_DATA_HASH" ]]; then
-      #       echo "Data has changed."
-      #       echo "changed=true" >> $GITHUB_ENV
-      #     else
-      #       echo "Data has not changed."
-      #       echo "changed=false" >> $GITHUB_ENV  # Set an environment variable to indicate no change
-      #     fi
+          # Check if hashes differ
+          if [[ "$NEW_DATA_HASH" != "$EXISTING_DATA_HASH" ]]; then
+            echo "Data has changed."
+            echo "changed=true" >> $GITHUB_ENV
+          else
+            echo "Data has not changed."
+            echo "changed=false" >> $GITHUB_ENV  # Set an environment variable to indicate no change
+          fi
 
       - name: Update Data File
-        # if: env.changed == 'true'  # Only run if data has changed
+        if: env.changed == 'true'  # Only run if data has changed
         run: |
           mv new_data.json data.json  # Move new data to the original file
           git config user.name "github-actions[bot]"
