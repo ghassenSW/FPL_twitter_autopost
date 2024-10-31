@@ -2,7 +2,7 @@ name: fetch injuries
 
 on:
   schedule:
-    - cron: "* * 1 * *" 
+    - cron: '0 15 * * 5'  # Runs every Friday at 15:00 UTC
   workflow_dispatch: 
 
 jobs:
