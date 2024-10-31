@@ -1,4 +1,4 @@
-# This code works in python anywhere and to make it work here you need to uncomment line 47 in prepare(gw) of current_time
+# This code works with utc time and to make it work with local tunisian time you need to uncomment line 49 in prepare(gw) of current_time
 # Every timme you want to start this code check the num_gw, num_of_match and num_of_set parameters and set them as present values (inital ones are min() and 0)
 
 import requests
@@ -244,9 +244,9 @@ teams_short_names=pd.DataFrame(teams_short_names,index=[0])
 
 while True:
     present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
-    num_gw=present_fixtures['event'].min()-1 # if you start running before the deadline of this gw you need to remove the -1
-    num_of_match=6 # chose the number of the match that starts next
-    num_of_set=4
+    num_gw=present_fixtures['event'].min() # if you start running before the deadline of this gw you need to remove the -1
+    num_of_match=0 # chose the number of the match that starts next
+    num_of_set=0
     # gw begins
     while True:
         num_of_set+=1
