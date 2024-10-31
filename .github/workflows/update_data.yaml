@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   
   workflow_run:
-    workflows: ["fetch injuries"]  # Matches the name of the first workflow
+    workflows: ["injury updates"]  # Matches the name of the first workflow
     types:
       - completed 
 
