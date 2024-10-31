@@ -23,6 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Run main.py
+      - name: Run injury_updates.py
         run: |
-          python main.py
+          python injury_updates.py
