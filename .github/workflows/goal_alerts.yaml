@@ -1,8 +1,8 @@
 name: goal alerts
 
 on:
-  schedule:
-    - cron: '0 15 * * 5'  # Runs every Friday at 15:00 UTC
+  # schedule:
+  #   - cron: '0 15 * * 5'  # Runs every Friday at 15:00 UTC
   workflow_dispatch: 
 
 jobs:
