@@ -2,7 +2,7 @@ name: Price change
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # This runs at 1:00 AM UTC every day
+    - cron: '0 0 * * *'  # This runs at 1:00 AM UTC every day
   workflow_dispatch: 
 
 jobs:
