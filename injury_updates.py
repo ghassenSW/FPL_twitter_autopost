@@ -18,6 +18,15 @@ def url_to_df(url,key=None):
   else:
       print(f"Error: {response.status_code}")
 
+def get_num_gw():
+    present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
+    num_gw=present_fixtures['event'].min()
+    fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures')
+    fixtures=fixtures[fixtures['event']==num_gw-1]
+    if fixtures.iloc[-1]['finished']==False:
+        num_gw-=1
+    return num_gw
+
 def prepare(df):
   df['full_name']=df['first_name']+' '+df['second_name']
   df['team']=df['team'].map(map.iloc[0])
@@ -99,11 +108,88 @@ def post(tweet_text):
         last_tweet = client.create_tweet(text=tweet, in_reply_to_tweet_id=last_tweet.data['id'])
         print(f"Posted tweet in thread:------------------------------------------------------------------------\n{tweet}")
 
+def lineup_to_text(where,num_match):
+  game=matches.iloc[num_match]
+  home_lineup=str(game[where+'Team']['name'])+':\n'
+  home_players=[]
+  positions=defaultdict(list)
+  while len(home_players)<11:
+    id=game['id']
+    lineup=url_to_df(f'https://www.sofascore.com/api/v1/event/{id}/lineups')
+    for player in lineup.loc['players'][f'{where}']:
+      if player['player']['name'] not in home_players:
+        home_players.append(player['player']['name'])
+        positions[player['player']['position']].append(player['player']['name'])
+
+  player_lineup=''
+  poses=['G','D','M','F']
+  for pos in poses:
+    for player in positions[pos]:
+      player_lineup+=player+' , '
+    player_lineup=player_lineup.strip(', ')
+    player_lineup+=' | '
+  player_lineup=player_lineup.strip(' | ')
+  home_lineup+=player_lineup
+  return home_lineup
+
+def two_lineups(num_gw,num_match):
+  team_h_short=str(matches.iloc[num_match]['homeTeam']['nameCode'])
+  team_a_short=str(matches.iloc[num_match]['awayTeam']['nameCode'])
+  match_tag=f"#{team_h_short}{team_a_short}"
+  text='Gameweek '+str(num_gw) +f' confirmed lineups: {match_tag}\n\n'
+  home_lineup=lineup_to_text('home',num_match)
+  away_lineup=lineup_to_text('away',num_match)
+  text+=home_lineup+'*\n\n'+away_lineup
+  text+=f'\n\n#FPL #GW{num_gw}'
+  return text
+
+def post_lineup(tweet_text):
+    bearer_token = "AAAAAAAAAAAAAAAAAAAAAHpZwQEAAAAAa%2BL2Fn26r7fRpOz6okyMP4gT8cI%3DgH6vulMQnvuTNGNywG06fnGEiuuYD28RHt8nf4wDzeP8DLJRJy"
+    consumer_key = "5H7fUfbrQ2XF5WqSG67ttM2R1"
+    consumer_secret = "Bw1MR5iPieCLgzodClVRjWIaPVrIPk7r7bif9t261WbgqiGob0"
+    access_token = "1844404415349817349-41SFbOP4Fmw7ptB4Jhgi52NQtn2l1V"
+    access_token_secret = "mrWXSuAUgvq9riop7xnO1mJ7XNPCdc4ZwZmjv4zmttdEJ"
+
+    TOKEN='7187953343:AAFSZ7I0FzzsQes_SrhG2dX74IRIcLgAa54'
+    CHANNEL_ID='-1001534852752'
+    url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
+
+    telegram_text=tweet_text.replace('*', "")
+    params = {'chat_id': CHANNEL_ID,'text': telegram_text}
+    telegram = requests.post(url, params=params)
+
+    client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
+                        access_token=access_token, access_token_secret=access_token_secret)
+    tweets=tweet_text.split('*')
+    last_tweet = client.create_tweet(text=tweets[0])
+    time.sleep(5)
+    tweet = client.create_tweet(text=tweets[1], in_reply_to_tweet_id=last_tweet[0].data['id'])
+
+def get_new_games():
+  num_gw=get_num_gw()
+  present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
+  present_fixtures=present_fixtures[present_fixtures['event']==num_gw]
+  present_fixtures['kickoff_time']=pd.to_datetime(present_fixtures['kickoff_time'])
+  present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
+  current_time=pd.Timestamp.now(tz='UTC')
+  past_time=current_time-pd.to_timedelta(15, unit='m')
+  new_games=present_fixtures[present_fixtures['kickoff_time']<current_time].index.values.tolist()
+  old_games=present_fixtures[present_fixtures['kickoff_time']<past_time].index.values.tolist()
+  games=[game for game in new_games if game not in old_games]
+  return games
+
+
+num_gw=get_num_gw()
+matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
+new_games=get_new_games()
+for game in new_games:
+  lineups=two_lineups(num_gw,game)
+  post_lineup(lineups)
+
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
 map=dict(zip(teams['id'],teams['name']))
 map=pd.DataFrame(map,index=[0])
-present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
-num_gameweek=present_fixtures['event'].min()
+num_gameweek=get_num_gw()
 
 with open('data.json', 'r') as file:
     data = json.load(file)
