@@ -167,7 +167,7 @@ def post_lineup(tweet_text):
 
 def get_new_games():
   num_gw=get_num_gw()
-  present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
+  present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures')
   present_fixtures=present_fixtures[present_fixtures['event']==num_gw]
   present_fixtures['kickoff_time']=pd.to_datetime(present_fixtures['kickoff_time'])
   present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
@@ -175,9 +175,8 @@ def get_new_games():
   past_time=current_time-pd.to_timedelta(15, unit='m')
   new_games=present_fixtures[present_fixtures['kickoff_time']<current_time].index.values.tolist()
   old_games=present_fixtures[present_fixtures['kickoff_time']<past_time].index.values.tolist()
-  games=[game for game in new_games if game not in old_games]
+  games=[game%10 for game in new_games if game not in old_games]
   return games
-
 
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
