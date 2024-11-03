@@ -5,6 +5,7 @@ import tweepy
 import time
 from datetime import datetime
 import json
+from collections import defaultdict
 
 def url_to_df(url,key=None):
   response = requests.get(url)
@@ -184,6 +185,7 @@ new_games=get_new_games()
 for game in new_games:
   lineups=two_lineups(num_gw,game)
   post_lineup(lineups)
+  print(lineups)
 
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
 map=dict(zip(teams['id'],teams['name']))
