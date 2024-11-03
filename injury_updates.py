@@ -118,9 +118,9 @@ def lineup_to_text(where,num_match):
     id=game['id']
     lineup=url_to_df(f'https://www.sofascore.com/api/v1/event/{id}/lineups')
     for player in lineup.loc['players'][f'{where}']:
-      if player['player']['name'] not in home_players:
-        home_players.append(player['player']['name'])
-        positions[player['player']['position']].append(player['player']['name'])
+      if player['player']['shortName'] not in home_players:
+        home_players.append(player['player']['shortName'])
+        positions[player['player']['position']].append(player['player']['shortName'])
 
   player_lineup=''
   poses=['G','D','M','F']
