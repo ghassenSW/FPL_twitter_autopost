@@ -106,6 +106,7 @@ def post(tweet_text):
     last_tweet = client.create_tweet(text=tweets[0])
     print(f"Posted tweet:--------------------------------------------------------------------------------------\n{tweets[0]}")
     for tweet in tweets[1:]:
+        time.sleep(10)
         last_tweet = client.create_tweet(text=tweet, in_reply_to_tweet_id=last_tweet.data['id'])
         print(f"Posted tweet in thread:------------------------------------------------------------------------\n{tweet}")
 
@@ -179,6 +180,8 @@ def get_new_games():
   games=[game%10 for game in new_games if game not in old_games]
   return games
 
+
+# after the lineup is confirmed it shows all the players with the benched ones
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
 new_games=get_new_games()
@@ -193,8 +196,8 @@ map=pd.DataFrame(map,index=[0])
 num_gameweek=get_num_gw()
 
 with open('data.json', 'r') as file:
-    data = json.load(file)
-old_stats=pd.DataFrame(data['elements'])
+    saved_data = json.load(file)
+old_stats=pd.DataFrame(saved_data['elements'])
 new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
 old=prepare(old_stats)
 new=prepare(new_stats)
