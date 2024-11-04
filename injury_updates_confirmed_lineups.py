@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import tweepy
 import time
-from datetime import datetime
+from datetime import datetime,timedelta
 import json
 import subprocess
 from collections import defaultdict
@@ -205,12 +205,19 @@ def prepare_current_gw(num_gw):
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
 all_games_of_current_gw=prepare_current_gw(num_gw)
+time_of_single_gw=all_games_of_current_gw.iloc[-1]['kickoff_time']+timedelta(hours=10)
+time_of_all_season=time_of_single_gw+timedelta(hours=34)
 new_games=get_new_games()
+
+current_time = datetime.now().replace(microsecond=0) 
+if (current_time>time_of_single_gw) and (current_time-timedelta(minutes=40)<time_of_single_gw):
+   subprocess.run(["python","gw_stats_single_gw.py"])
+if (current_time>time_of_all_season) and (current_time-timedelta(minutes=40)<time_of_all_season):
+   subprocess.run(["python","gw_stats_all_seasoo.py"])
+
 
 if len(new_games)>0:
   subprocess.run(["python", "goal_alerts.py"])
-  if new_games[-1]==len(all_games_of_current_gw)-1:
-     subprocess.run(["python","gw_stats.py"])
 
 for game in new_games:
   lineups=two_lineups(num_gw,game)
