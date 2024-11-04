@@ -181,14 +181,36 @@ def get_new_games():
   games=[game%10 for game in new_games if game not in old_games]
   return games
 
+def prepare_current_gw(num_gw):
+    gw_matches=url_to_df('https://fantasy.premierleague.com/api/fixtures/')
+    gw_matches=gw_matches[gw_matches['event']==num_gw]
+    gw_matches['day']=gw_matches['kickoff_time'].apply(lambda x:datetime.strptime(x,'%Y-%m-%dT%H:%M:%SZ').day)
+    gw_matches['day']=gw_matches['day']-gw_matches['day'].min()+1
+    gw_matches=gw_matches[['id','kickoff_time','minutes','started','finished_provisional','team_a','team_h','team_a_score','team_h_score','stats','day']]
+    gw_matches['num_of_match']=gw_matches.index%10
+    gw_matches['num_of_set']=gw_matches['kickoff_time'].factorize()[0]+1
+    gw_matches['team_a_score']=gw_matches['team_a_score'].fillna(0)
+    gw_matches['team_h_score']=gw_matches['team_h_score'].fillna(0)
+    gw_matches['team_a_score']=gw_matches['team_a_score'].astype(int)
+    gw_matches['team_h_score']=gw_matches['team_h_score'].astype(int)
+    gw_matches['kickoff_time'] = pd.to_datetime(gw_matches['kickoff_time']).dt.tz_localize(None)
+    current_time = datetime.now().replace(microsecond=0) 
+    # current_time=current_time-timedelta(hours=1)
+    gw_matches['waiting_time']=gw_matches['kickoff_time']-current_time
+    gw_matches['waiting_time']=(gw_matches['waiting_time'].apply(lambda x:x.total_seconds())).astype(int)
+    return gw_matches
+
 
 # after the lineup is confirmed it shows all the players with the benched ones
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
+all_games_of_current_gw=prepare_current_gw(num_gw)
 new_games=get_new_games()
 
 if len(new_games)>0:
   subprocess.run(["python", "goal_alerts.py"])
+  if new_games[-1]==len(all_games_of_current_gw)-1:
+     subprocess.run(["python","gw_stats.py"])
 
 for game in new_games:
   lineups=two_lineups(num_gw,game)
