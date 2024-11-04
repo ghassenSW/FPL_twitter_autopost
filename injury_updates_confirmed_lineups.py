@@ -5,6 +5,7 @@ import tweepy
 import time
 from datetime import datetime
 import json
+import subprocess
 from collections import defaultdict
 
 def url_to_df(url,key=None):
@@ -174,7 +175,7 @@ def get_new_games():
   present_fixtures['kickoff_time']=pd.to_datetime(present_fixtures['kickoff_time'])
   present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
   current_time=pd.Timestamp.now(tz='UTC')
-  past_time=current_time-pd.to_timedelta(15, unit='m')
+  past_time=current_time-pd.to_timedelta(40, unit='m')
   new_games=present_fixtures[present_fixtures['kickoff_time']<current_time].index.values.tolist()
   old_games=present_fixtures[present_fixtures['kickoff_time']<past_time].index.values.tolist()
   games=[game%10 for game in new_games if game not in old_games]
@@ -185,6 +186,10 @@ def get_new_games():
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
 new_games=get_new_games()
+
+if len(new_games)>0:
+  subprocess.run(["python", "goal_alerts.py"])
+
 for game in new_games:
   lineups=two_lineups(num_gw,game)
   post_lineup(lineups)
