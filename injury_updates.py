@@ -201,29 +201,29 @@ def prepare_current_gw(num_gw):
     return gw_matches
 
 
-# after the lineup is confirmed it shows all the players with the benched ones
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
-all_games_of_current_gw=prepare_current_gw(num_gw)
+all_games_of_current_gw=prepare_current_gw(num_gw-1)
 time_of_single_gw=all_games_of_current_gw.iloc[-1]['kickoff_time']+timedelta(hours=10)
-time_of_all_season=time_of_single_gw+timedelta(hours=34)
+time_of_all_season=time_of_single_gw+timedelta(hours=24)
 new_games=get_new_games()
 
-current_time = datetime.now().replace(microsecond=0) 
+current_time = datetime.now().replace(microsecond=0)
 if (current_time>time_of_single_gw) and (current_time-timedelta(minutes=40)<time_of_single_gw):
-   subprocess.run(["python","gw_stats_single_gw.py"])
+   subprocess.run(["python","gw_stats_last_gw.py"])
 if (current_time>time_of_all_season) and (current_time-timedelta(minutes=40)<time_of_all_season):
-   subprocess.run(["python","gw_stats_all_seasoo.py"])
-
+   subprocess.run(["python","gw_stats_all_season.py"])
 
 if len(new_games)>0:
   subprocess.run(["python", "goal_alerts.py"])
 
+# after the lineup is confirmed it shows all the players with the benched ones
 for game in new_games:
   lineups=two_lineups(num_gw,game)
   post_lineup(lineups)
   print(lineups)
 
+# injury updates:
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
 map=dict(zip(teams['id'],teams['name']))
 map=pd.DataFrame(map,index=[0])
