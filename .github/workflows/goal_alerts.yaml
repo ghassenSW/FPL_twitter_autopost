@@ -24,4 +24,4 @@ jobs:
           
       - name: Run injury_updates.py
         run: |
-          python goal_alerts.py
+          python gw_stats_last_gw.py
