@@ -204,7 +204,8 @@ def prepare_current_gw(num_gw):
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
 all_games_of_current_gw=prepare_current_gw(num_gw-1)
-time_of_single_gw=all_games_of_current_gw.iloc[-1]['kickoff_time']+timedelta(hours=10)
+last_game_time=all_games_of_current_gw.iloc[-1]['kickoff_time']
+time_of_single_gw = (last_game_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
 time_of_all_season=time_of_single_gw+timedelta(hours=24)
 new_games=get_new_games()
 
