@@ -1,8 +1,7 @@
 name: goal alerts
 
 on:
-  # schedule:
-  #   - cron: '0 15 * * 5'  # Runs every Friday at 15:00 UTC
+  # in case you are modifying when the games are playing
   workflow_dispatch: 
 
 jobs:
