@@ -200,25 +200,47 @@ def prepare_current_gw(num_gw):
     gw_matches['waiting_time']=(gw_matches['waiting_time'].apply(lambda x:x.total_seconds())).astype(int)
     return gw_matches
 
+def post_on_time(post_time,file):
+  current_time = datetime.now().replace(microsecond=0)
+  if (current_time>post_time) and (current_time-timedelta(minutes=40)<post_time):
+    subprocess.run(["python",f"gw_stats/{file}.py"])
 
 num_gw=get_num_gw()
 matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
 all_games_of_current_gw=prepare_current_gw(num_gw-1)
 last_game_time=all_games_of_current_gw.iloc[-1]['kickoff_time']
-time_of_single_gw = (last_game_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
-time_of_all_season=time_of_single_gw+timedelta(hours=24)
+# last gw
+time_top_atk_last_gw=(last_game_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
+time_bottom_atk_last_gw=time_top_atk_last_gw+timedelta(hours=2)
+time_top_def_last_gw=time_bottom_atk_last_gw+timedelta(hours=2)
+time_bottom_def_last_gw=time_top_def_last_gw+timedelta(hours=2)
+post_on_time(time_top_atk_last_gw,'top_atk_last_gw')
+post_on_time(time_bottom_atk_last_gw,'bottom_atk_last_gw')
+post_on_time(time_top_def_last_gw,'top_def_last_gw')
+post_on_time(time_bottom_def_last_gw,'bottom_def_last_gw')
+# players stats
+time_points_stats=time_bottom_def_last_gw+timedelta(hours=2)
+time_goals_stats=time_points_stats+timedelta(hours=2)
+time_assists_stats=time_goals_stats+timedelta(hours=2)
+post_on_time(time_points_stats,'points_stats')
+post_on_time(time_goals_stats,'goals_stats')
+post_on_time(time_assists_stats,'assists_stats')
+# all season
+time_top_atk_all_season=time_top_atk_last_gw+timedelta(hours=24)
+time_bottom_atk_all_season=time_top_atk_all_season+timedelta(hours=2)
+time_top_def_all_season=time_bottom_atk_all_season+timedelta(hours=2)
+time_bottom_def_all_season=time_top_def_all_season+timedelta(hours=2)
+post_on_time(time_top_atk_all_season,'top_atk_all_season')
+post_on_time(time_bottom_atk_all_season,'bottom_atk_all_season')
+post_on_time(time_top_def_all_season,'top_def_all_season')
+post_on_time(time_bottom_def_all_season,'bottom_def_all_season')
+
+# goal alerts
 new_games=get_new_games()
-
-current_time = datetime.now().replace(microsecond=0)
-if (current_time>time_of_single_gw) and (current_time-timedelta(minutes=40)<time_of_single_gw):
-   subprocess.run(["python","gw_stats_last_gw.py"])
-if (current_time>time_of_all_season) and (current_time-timedelta(minutes=40)<time_of_all_season):
-   subprocess.run(["python","gw_stats_all_season.py"])
-
 if len(new_games)>0:
   subprocess.run(["python", "goal_alerts.py"])
 
-# after the lineup is confirmed it shows all the players with the benched ones
+# confirmed lineups
 for game in new_games:
   lineups=two_lineups(num_gw,game)
   post_lineup(lineups)
