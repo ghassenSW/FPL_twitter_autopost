@@ -240,11 +240,11 @@ new_games=get_new_games()
 if len(new_games)>0:
   subprocess.run(["python", "goal_alerts.py"])
 
-# confirmed lineups
-for game in new_games:
-  lineups=two_lineups(num_gw,game)
-  post_lineup(lineups)
-  print(lineups)
+# # confirmed lineups
+# for game in new_games:
+#   lineups=two_lineups(num_gw,game)
+#   post_lineup(lineups)
+#   print(lineups)
 
 # injury updates:
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
