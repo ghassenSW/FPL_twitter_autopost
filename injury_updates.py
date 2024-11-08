@@ -84,6 +84,8 @@ def tweet_to_telegram(tweet_text):
   for line in last_lines[:-1]:
     output+=line+'\n'
   output+='\n'+last_lines[-1]
+  output=output.replace('🚨 Injury Updates','')
+  output='🚨 Injury Updates\n'+output
   return output
 
 def post(tweet_text):
