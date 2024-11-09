@@ -22,6 +22,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Run injury_updates.py
+      - name: run goal_alerts.py
         run: |
-          python gw_stats_last_gw.py
+          python goal_alerts.py
