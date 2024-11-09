@@ -250,7 +250,7 @@ def get_upcoming_games():
   present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures')
   present_fixtures=present_fixtures[present_fixtures['event']==num_gw]
   present_fixtures['kickoff_time']=pd.to_datetime(present_fixtures['kickoff_time'])
-  present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
+  # present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
   current_time=pd.Timestamp.now(tz='UTC')
   past_time=current_time-pd.to_timedelta(40, unit='m')
   new_games=present_fixtures[present_fixtures['kickoff_time']<current_time].index.values.tolist()
