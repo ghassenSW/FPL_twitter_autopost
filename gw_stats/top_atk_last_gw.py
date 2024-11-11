@@ -90,4 +90,4 @@ df=dict(zip(teams['id'],teams['emoji']))
 num_gw=get_num_gw()-1
 top_atk,bottom_atk=prepare_atk(num_gw)
 top_text_atk=df_to_text_atk(top_atk,'TOP',num_gw)
-print(top_text_atk)
+post(top_text_atk)
