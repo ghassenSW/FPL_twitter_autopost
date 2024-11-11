@@ -37,56 +37,40 @@ def prepare(df):
   df.loc[:,'news']=df.loc[:,'news'].fillna('')
   return df
 
-def split_lines(text):
-  lines=text.split('\n')
-  tweets=[]
-  for line in lines[:-1]:
-    tweets.append(line.strip())
-  return tweets
-
-def split_text_into_tweets(text):
+def split_text_into_tweets(text, limit=280):
     lines = text.split('|')
     tweets = []
+    current_tweet = ""
+
     for line in lines:
-      tweets.append(line.strip())
+        if len(current_tweet) + len(line) + 1 <= limit:
+            current_tweet += f"{line}"
+        else:
+            tweets.append(current_tweet.strip())
+            current_tweet = f"{line}"
+    if current_tweet:
+        tweets.append(current_tweet.strip('\n'))
     return tweets
 
 def df_to_text(players,gw):
-    tweet_text=''
+    tweet_text='🚨 Injury Updates\n\n'
     match_tag=f'#GW{gw} #FPL #FPL_InjuryUpdates'
     for index,row in players.iterrows():
-        tweet_text+='🚨 Injury Updates\n'
         player_name=row['full_name']
-        team_name=row['team']
-        tweet_text+=f'👟 Player : {player_name} ({team_name})\n'
+        team_name=teams_short_names[row['team']]
+        tweet_text+=f'👟 {player_name} (#{team_name})\n'
         if(row['chance_of_playing_next_round']==100):
-            tweet_text+=f'✅ Update: Availability is now 100%\n'
+            tweet_text+=f'✅ Availability is now 100%\n'
         elif row['chance_of_playing_next_round']==0:
            stat=row['news']
-           tweet_text+=f'⛔️ Update: {stat}\n'
+           tweet_text+=f'⛔️ {stat}\n'
         else:
             stat=row['news']
-            tweet_text+=f'🤕 Update: {stat}\n'
-        tweet_text+=match_tag
+            tweet_text+=f'🤕 {stat}\n'
         tweet_text+='\n|'
     tweet_text=tweet_text.strip('\n|')
+    tweet_text+='\n\n'+match_tag
     return tweet_text
-
-def tweet_to_telegram(tweet_text):
-  tweets=split_text_into_tweets(tweet_text)
-  output=''
-  for tweet in tweets[:-1]:
-    lines=split_lines(tweet)
-    for line in lines:
-      output+=line+'\n'
-    output+='\n'
-  last_lines=tweets[-1].split('\n')
-  for line in last_lines[:-1]:
-    output+=line+'\n'
-  output+='\n'+last_lines[-1]
-  output=output.replace('🚨 Injury Updates','')
-  output='🚨 Injury Updates\n'+output
-  return output
 
 def post(tweet_text):
     bearer_token = "AAAAAAAAAAAAAAAAAAAAAHpZwQEAAAAAa%2BL2Fn26r7fRpOz6okyMP4gT8cI%3DgH6vulMQnvuTNGNywG06fnGEiuuYD28RHt8nf4wDzeP8DLJRJy"
@@ -99,13 +83,13 @@ def post(tweet_text):
     CHANNEL_ID='-1001534852752'
     url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
 
-    telegram_text=tweet_to_telegram(tweet_text)
+    telegram_text=tweet_text.replace('|','')
     params = {'chat_id': CHANNEL_ID,'text': telegram_text}
     telegram = requests.post(url, params=params)
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
 
-    tweets = split_text_into_tweets(tweet_text)
+    tweets=split_text_into_tweets(tweet_text)
     last_tweet = client.create_tweet(text=tweets[0])
     print(f"Posted tweet:--------------------------------------------------------------------------------------\n{tweets[0]}")
     for tweet in tweets[1:]:
@@ -250,6 +234,7 @@ if len(new_games)>0:
 
 # injury updates:
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
+teams_short_names=dict(zip(teams['name'],teams['short_name']))
 map=dict(zip(teams['id'],teams['name']))
 map=pd.DataFrame(map,index=[0])
 num_gameweek=get_num_gw()
