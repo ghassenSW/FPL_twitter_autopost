@@ -188,7 +188,7 @@ def prepare_current_gw(num_gw):
 
 def post_on_time(post_time,file):
   current_time = datetime.now().replace(microsecond=0)
-  if (current_time>post_time) and (current_time-timedelta(minutes=40)<post_time):
+  if (current_time>post_time) and (current_time-timedelta(minutes=30)<post_time):
     subprocess.run(["python",f"gw_stats/{file}.py"])
 
 num_gw=get_num_gw()
