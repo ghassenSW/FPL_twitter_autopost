@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8' # Specify the Python version you need
+          python-version: '3.8'
 
       - name: Install dependencies
         run: |
@@ -23,5 +23,13 @@ jobs:
           pip install -r requirements.txt
           
       - name: run goal_alerts.py
+        env:
+          BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+          CONSUMER_KEY: ${{ secrets.CONSUMER_KEY}}
+          CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET}}
+          ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
+          ACCESS_TOKEN_SECRET: ${{ACCESS_TOKEN_SECRET}}
+          TOKEN: ${{secrets.TOKEN}}
+          CHANNEL_ID: ${{secrets.CHANNEL_ID}}
         run: |
           python goal_alerts.py
