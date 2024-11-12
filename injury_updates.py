@@ -97,62 +97,6 @@ def post(tweet_text):
         last_tweet = client.create_tweet(text=tweet, in_reply_to_tweet_id=last_tweet.data['id'])
         print(f"Posted tweet in thread:------------------------------------------------------------------------\n{tweet}")
 
-def lineup_to_text(where,num_match):
-  game=matches.iloc[num_match]
-  home_lineup=str(game[where+'Team']['name'])+':\n'
-  home_players=[]
-  positions=defaultdict(list)
-  while len(home_players)<11:
-    id=game['id']
-    lineup=url_to_df(f'https://www.sofascore.com/api/v1/event/{id}/lineups')
-    for player in lineup.loc['players'][f'{where}']:
-      if player['player']['shortName'] not in home_players:
-        home_players.append(player['player']['shortName'])
-        positions[player['player']['position']].append(player['player']['shortName'])
-
-  player_lineup=''
-  poses=['G','D','M','F']
-  for pos in poses:
-    for player in positions[pos]:
-      player_lineup+=player+' , '
-    player_lineup=player_lineup.strip(', ')
-    player_lineup+=' | '
-  player_lineup=player_lineup.strip(' | ')
-  home_lineup+=player_lineup
-  return home_lineup
-
-def two_lineups(num_gw,num_match):
-  team_h_short=str(matches.iloc[num_match]['homeTeam']['nameCode'])
-  team_a_short=str(matches.iloc[num_match]['awayTeam']['nameCode'])
-  match_tag=f"#{team_h_short}{team_a_short}"
-  text='Gameweek '+str(num_gw) +f' confirmed lineups: {match_tag}\n\n'
-  home_lineup=lineup_to_text('home',num_match)
-  away_lineup=lineup_to_text('away',num_match)
-  text+=home_lineup+'*\n\n'+away_lineup
-  text+=f'\n\n#FPL #GW{num_gw}'
-  return text
-
-def post_lineup(tweet_text):
-    bearer_token = os.getenv('BEARER_TOKEN')
-    consumer_key =  os.getenv('CONSUMER_KEY')
-    consumer_secret = os.getenv('CONSUMER_SECRET')
-    access_token = os.getenv('ACCESS_TOKEN')
-    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
-    TOKEN=os.getenv('TOKEN')
-    CHANNEL_ID=os.getenv('CHANNEL_ID')
-    url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
-
-    telegram_text=tweet_text.replace('*', "")
-    params = {'chat_id': CHANNEL_ID,'text': telegram_text}
-    telegram = requests.post(url, params=params)
-
-    client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
-                        access_token=access_token, access_token_secret=access_token_secret)
-    tweets=tweet_text.split('*')
-    last_tweet = client.create_tweet(text=tweets[0])
-    time.sleep(5)
-    tweet = client.create_tweet(text=tweets[1], in_reply_to_tweet_id=last_tweet[0].data['id'])
-
 def get_new_games():
   num_gw=get_num_gw()
   present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures')
