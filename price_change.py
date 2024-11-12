@@ -5,6 +5,7 @@ import time
 import tweepy
 from datetime import datetime,timedelta
 import json
+import os
 
 def url_to_df(url,key=None):
   response = requests.get(url)
@@ -91,14 +92,14 @@ def split_text_into_tweets(text, limit=280):
     return tweets
 
 def post(df):
-    TOKEN='7187953343:AAFSZ7I0FzzsQes_SrhG2dX74IRIcLgAa54'
-    CHANNEL_ID='-1001534852752'
+    bearer_token = os.getenv('BEARER_TOKEN')
+    consumer_key =  os.getenv('CONSUMER_KEY')
+    consumer_secret = os.getenv('CONSUMER_SECRET')
+    access_token = os.getenv('ACCESS_TOKEN')
+    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+    TOKEN=os.getenv('TOKEN')
+    CHANNEL_ID=os.getenv('CHANNEL_ID')
     url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
-    bearer_token = "AAAAAAAAAAAAAAAAAAAAAHpZwQEAAAAAa%2BL2Fn26r7fRpOz6okyMP4gT8cI%3DgH6vulMQnvuTNGNywG06fnGEiuuYD28RHt8nf4wDzeP8DLJRJy"
-    consumer_key = "5H7fUfbrQ2XF5WqSG67ttM2R1"
-    consumer_secret = "Bw1MR5iPieCLgzodClVRjWIaPVrIPk7r7bif9t261WbgqiGob0"
-    access_token = "1844404415349817349-41SFbOP4Fmw7ptB4Jhgi52NQtn2l1V"
-    access_token_secret = "mrWXSuAUgvq9riop7xnO1mJ7XNPCdc4ZwZmjv4zmttdEJ"
 
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
