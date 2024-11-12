@@ -28,7 +28,7 @@ jobs:
           CONSUMER_KEY: ${{ secrets.CONSUMER_KEY}}
           CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET}}
           ACCESS_TOKEN: ${{secrets.ACCESS_TOKEN}}
-          ACCESS_TOKEN_SECRET: ${{ACCESS_TOKEN_SECRET}}
+          ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
           TOKEN: ${{secrets.TOKEN}}
           CHANNEL_ID: ${{secrets.CHANNEL_ID}}
         run: |
