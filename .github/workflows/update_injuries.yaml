@@ -32,5 +32,6 @@ jobs:
           ACCESS_TOKEN_SECRET: ${{secrets.ACCESS_TOKEN_SECRET}}
           TOKEN: ${{secrets.TOKEN}}
           CHANNEL_ID: ${{secrets.CHANNEL_ID}}
+          X_RAPIDAPI_KEY: ${{secrets.X_RAPIDAPI_KEY}}
         run: |
           python injury_updates.py
