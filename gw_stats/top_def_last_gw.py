@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import time
 import tweepy
+import os
 from datetime import datetime,timedelta
 
 def url_to_df(url,key=None):
@@ -63,13 +64,13 @@ def df_to_text_def(df,word,num_gameweeks):
   return text
 
 def post(tweet_text):
-    bearer_token = "AAAAAAAAAAAAAAAAAAAAAHpZwQEAAAAAa%2BL2Fn26r7fRpOz6okyMP4gT8cI%3DgH6vulMQnvuTNGNywG06fnGEiuuYD28RHt8nf4wDzeP8DLJRJy"
-    consumer_key = "5H7fUfbrQ2XF5WqSG67ttM2R1"
-    consumer_secret = "Bw1MR5iPieCLgzodClVRjWIaPVrIPk7r7bif9t261WbgqiGob0"
-    access_token = "1844404415349817349-41SFbOP4Fmw7ptB4Jhgi52NQtn2l1V"
-    access_token_secret = "mrWXSuAUgvq9riop7xnO1mJ7XNPCdc4ZwZmjv4zmttdEJ"
-    TOKEN='7187953343:AAFSZ7I0FzzsQes_SrhG2dX74IRIcLgAa54'
-    CHANNEL_ID='-1001534852752'
+    bearer_token = os.getenv('BEARER_TOKEN')
+    consumer_key =  os.getenv('CONSUMER_KEY')
+    consumer_secret = os.getenv('CONSUMER_SECRET')
+    access_token = os.getenv('ACCESS_TOKEN')
+    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+    TOKEN=os.getenv('TOKEN')
+    CHANNEL_ID=os.getenv('CHANNEL_ID')
     url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
 
     params = {'chat_id': CHANNEL_ID,'text': tweet_text}
