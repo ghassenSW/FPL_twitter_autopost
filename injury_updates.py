@@ -164,16 +164,13 @@ post_on_time(time_bottom_atk_all_season,'bottom_atk_all_season')
 post_on_time(time_top_def_all_season,'top_def_all_season')
 post_on_time(time_bottom_def_all_season,'bottom_def_all_season')
 
-# goal alerts
+# lineups & goal alerts
 new_games=get_new_games()
 if len(new_games)>0:
+  print('lineups are processing')
+  # subprocss.run(["python","confirmed_lineups.py"])
+  print('lineups are posted and goal alerts will begin processing')
   subprocess.run(["python", "goal_alerts.py"])
-
-# # confirmed lineups
-# for game in new_games:
-#   lineups=two_lineups(num_gw,game)
-#   post_lineup(lineups)
-#   print(lineups)
 
 # injury updates:
 teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
