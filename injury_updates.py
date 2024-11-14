@@ -51,6 +51,12 @@ def split_text_into_tweets(text, limit=280):
             current_tweet = f"{line}"
     if current_tweet:
         tweets.append(current_tweet.strip('\n'))
+    if len(tweets[-1]>limit):
+        pos=tweets[-1].rfind('👟')
+        f_tweet=tweets[:pos]
+        s_tweet=tweets[pos:]
+        tweets[-1]=f_tweet
+        tweets.append(s_tweet)
     return tweets
 
 def df_to_text(players,gw):
