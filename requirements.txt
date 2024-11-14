@@ -12,3 +12,5 @@ six==1.16.0
 tweepy==4.14.0
 tzdata==2024.2
 urllib3==2.2.3
+PyGithub==1.56.0
+
