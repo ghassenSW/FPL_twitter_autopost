@@ -28,6 +28,6 @@ jobs:
           
       - name: Run update_teams_data.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         run: |
           python update_teams_data.py
