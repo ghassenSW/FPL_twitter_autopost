@@ -27,5 +27,7 @@ jobs:
           pip install -r requirements.txt
           
       - name: Run update_teams_data.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python update_teams_data.py
