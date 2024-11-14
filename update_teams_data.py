@@ -100,6 +100,7 @@ with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
 try:
     file_content = repo.get_contents(FILE_PATH)
     sha = file_content.sha
+    excel_buffer.seek(0)
     repo.update_file(FILE_PATH, "Overwriting Excel file with updated data", excel_buffer.read(), sha)
     print(f"File {FILE_PATH} has been updated.")
 except Exception as e:
