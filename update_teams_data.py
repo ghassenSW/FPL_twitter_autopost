@@ -80,30 +80,28 @@ df = pd.read_excel(excel_data, sheet_name=None)
 year_fb=list(df.keys())[-1]
 year_sc=fb_to_sc(year_fb)
 events=sc.get_match_dicts(year_sc,'EPL')
-all_stats=[]
+new_sheet=[]
 for event in events:
   id=event['id']
   try:
     stats=prepare_sc(id)
-    all_stats.append(stats)
+    new_sheet.append(stats)
   except Exception as e:
     continue
-all_stats=pd.concat(all_stats)
-all_stats=all_stats.sort_values(['GW'])
-df[year_fb]=all_stats
+new_sheet=pd.concat(new_sheet)
+new_sheet=new_sheet.sort_values(['GW'])
+df[year_fb]=new_sheet
 
-print(df[year_fb])
+excel_buffer = io.BytesIO()
 
-# with io.BytesIO() as output:
-#     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-#         sheet_data.to_excel(writer, sheet_name=sheet_name, index=False)
-#     modified_content = output.getvalue()
-
-# # Push the updated content back to the repository
-# repo.update_file(
-#     path=FILE_PATH,
-#     message="Automated update of Excel file",
-#     content=modified_content,
-#     sha=file_content.sha  # Ensures we are updating the latest version
-# )
-print("File updated and pushed successfully!")
+with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+    for sheet_name, sheet in df.items():
+        sheet.to_excel(writer, sheet_name=sheet_name, index=False)
+try:
+    file_content = repo.get_contents(FILE_PATH)
+    sha = file_content.sha
+    repo.update_file(FILE_PATH, "Overwriting Excel file with updated data", excel_buffer.read(), sha)
+    print(f"File {FILE_PATH} has been updated.")
+except Exception as e:
+    repo.create_file(FILE_PATH, "Adding new Excel file", excel_buffer.read())
+    print(f"File {FILE_PATH} has been created.")
