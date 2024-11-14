@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   
   workflow_run:
-    workflows: ["price changes"]  # Matches the name of the first workflow
+    workflows: ["Price change"]  # Matches the name of the first workflow
     types:
       - completed 
 
