@@ -16,6 +16,10 @@ sys.path.append('./src')
 fb = sfc.FBref()
 sc = sfc.Sofascore()
 
+def fb_to_sc(year_fb):
+    year_sc=year_fb[2:4]+'/'+year_fb[-2:]
+    return year_sc
+
 def prepare_sc(match_id):
   matchy=sc.get_match_dict(match_id)
   matchy={'event':matchy}
@@ -73,7 +77,8 @@ excel_data = io.BytesIO(decoded_content)
 df = pd.read_excel(excel_data, sheet_name=None)
 
 
-year_sc=list(df.keys())[-1]
+year_fb=list(df.keys())[-1]
+year_sc=fb_to_sc(year_fb)
 events=sc.get_match_dicts(year_sc,'EPL')
 all_stats=[]
 for event in events:
@@ -85,8 +90,20 @@ for event in events:
     continue
 all_stats=pd.concat(all_stats)
 all_stats=all_stats.sort_values(['GW'])
-df[year_sc]=all_stats
+df[year_fb]=all_stats
 
+print(df[year_fb])
 
-print(df[year_sc])
+# with io.BytesIO() as output:
+#     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+#         sheet_data.to_excel(writer, sheet_name=sheet_name, index=False)
+#     modified_content = output.getvalue()
+
+# # Push the updated content back to the repository
+# repo.update_file(
+#     path=FILE_PATH,
+#     message="Automated update of Excel file",
+#     content=modified_content,
+#     sha=file_content.sha  # Ensures we are updating the latest version
+# )
 print("File updated and pushed successfully!")
