@@ -6,10 +6,10 @@ import tweepy
 import os
 from datetime import datetime,timedelta
 
-def url_to_df(url,key=None):
+def url_to_df(url,key=None,m=None):
   time_of_trying=0
+  response = requests.get(url)
   while time_of_trying<=3600:
-    response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         if key!=None:
@@ -20,7 +20,7 @@ def url_to_df(url,key=None):
     else:
         time.sleep(60)
         time_of_trying+=60
-        print(f"Error: {response.status_code}")
+        print(f"Error: {response.status_code} this manager is {m}")
 
 def get_num_gw():
     present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
@@ -46,7 +46,6 @@ def prepare(num_gw,pages):
     for i in range(1,n):
         df=url_to_df(f'https://fantasy.premierleague.com/api/leagues-classic/314/standings/?page_new_entries=1&page_standings={i}&phase=1','standings')
         managers=managers+(list([d['entry'] for d in df['results']]))
-    len(managers)
     d={}
     for manager in managers:
         captain=url_to_df(f'https://fantasy.premierleague.com/api/entry/{manager}/event/{num_gw}/picks/','picks',manager)
