@@ -6,17 +6,21 @@ import tweepy
 import os
 from datetime import datetime,timedelta
 
-def url_to_df(url,key=None,m=None):
-  response = requests.get(url)
-  if response.status_code == 200:
-      data = response.json()
-      if key!=None:
-        df=pd.DataFrame(data[key])
-      else:
-        df=pd.DataFrame(data)
-      return df
-  else:
-      print(f"Error: {response.status_code} this manager is {m}")
+def url_to_df(url,key=None):
+  time_of_trying=0
+  while time_of_trying<=3600:
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if key!=None:
+            df=pd.DataFrame(data[key])
+        else:
+            df=pd.DataFrame(data)
+        return df
+    else:
+        time.sleep(60)
+        time_of_trying+=60
+        print(f"Error: {response.status_code}")
 
 def get_num_gw():
     present_fixtures=url_to_df('https://fantasy.premierleague.com/api/fixtures/?future=1')
