@@ -178,7 +178,7 @@ post_on_time(time_bottom_def_all_season,'bottom_def_all_season')
 new_games=get_new_games()
 if len(new_games)>0:
   print('lineups are processing')
-  # subprocss.run(["python","confirmed_lineups.py"])
+  subprocess.run(["python","confirmed_lineups.py"])
   print('lineups are posted and goal alerts will begin processing')
   subprocess.run(["python", "goal_alerts.py"])
 
