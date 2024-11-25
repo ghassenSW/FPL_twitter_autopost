@@ -144,68 +144,75 @@ def post_on_time(post_time,file):
   if (current_time>post_time) and (current_time-timedelta(minutes=30)<post_time):
     subprocess.run(["python",f"gw_stats/{file}.py"])
 
-num_gw=get_num_gw()
-matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
-all_games_of_current_gw=prepare_current_gw(num_gw-1)
-last_game_time=all_games_of_current_gw.iloc[-1]['kickoff_time']
-# last gw
-time_top_atk_last_gw=(last_game_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
-time_bottom_atk_last_gw=time_top_atk_last_gw+timedelta(hours=2)
-time_top_def_last_gw=time_bottom_atk_last_gw+timedelta(hours=2)
-time_bottom_def_last_gw=time_top_def_last_gw+timedelta(hours=2)
-post_on_time(time_top_atk_last_gw,'top_atk_last_gw')
-post_on_time(time_bottom_atk_last_gw,'bottom_atk_last_gw')
-post_on_time(time_top_def_last_gw,'top_def_last_gw')
-post_on_time(time_bottom_def_last_gw,'bottom_def_last_gw')
-# players stats
-time_points_stats=time_bottom_def_last_gw+timedelta(hours=2)
-time_goals_stats=time_points_stats+timedelta(hours=2)
-time_assists_stats=time_goals_stats+timedelta(hours=2)
-post_on_time(time_points_stats,'points_stats')
-post_on_time(time_goals_stats,'goals_stats')
-post_on_time(time_assists_stats,'assists_stats')
-# all season
-time_top_atk_all_season=time_top_atk_last_gw+timedelta(hours=24)
-time_bottom_atk_all_season=time_top_atk_all_season+timedelta(hours=2)
-time_top_def_all_season=time_bottom_atk_all_season+timedelta(hours=2)
-time_bottom_def_all_season=time_top_def_all_season+timedelta(hours=2)
-post_on_time(time_top_atk_all_season,'top_atk_all_season')
-post_on_time(time_bottom_atk_all_season,'bottom_atk_all_season')
-post_on_time(time_top_def_all_season,'top_def_all_season')
-post_on_time(time_bottom_def_all_season,'bottom_def_all_season')
 
-# lineups & goal alerts
-new_games=get_new_games()
-if len(new_games)>0:
-  print('lineups are processing')
-  subprocess.run(["python","confirmed_lineups.py"])
-  print('lineups are posted and goal alerts will begin processing')
-  subprocess.run(["python", "goal_alerts.py"])
+def main():
+    num_gw=get_num_gw()
+    matches=url_to_df(f'https://www.sofascore.com/api/v1/unique-tournament/17/season/61627/events/round/{num_gw}','events')
+    all_games_of_current_gw=prepare_current_gw(num_gw-1)
+    last_game_time=all_games_of_current_gw.iloc[-1]['kickoff_time']
+    # last gw
+    time_top_atk_last_gw=(last_game_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
+    time_bottom_atk_last_gw=time_top_atk_last_gw+timedelta(hours=2)
+    time_top_def_last_gw=time_bottom_atk_last_gw+timedelta(hours=2)
+    time_bottom_def_last_gw=time_top_def_last_gw+timedelta(hours=2)
+    post_on_time(time_top_atk_last_gw,'top_atk_last_gw')
+    post_on_time(time_bottom_atk_last_gw,'bottom_atk_last_gw')
+    post_on_time(time_top_def_last_gw,'top_def_last_gw')
+    post_on_time(time_bottom_def_last_gw,'bottom_def_last_gw')
+    # players stats
+    time_points_stats=time_bottom_def_last_gw+timedelta(hours=2)
+    time_goals_stats=time_points_stats+timedelta(hours=2)
+    time_assists_stats=time_goals_stats+timedelta(hours=2)
+    post_on_time(time_points_stats,'points_stats')
+    post_on_time(time_goals_stats,'goals_stats')
+    post_on_time(time_assists_stats,'assists_stats')
+    # all season
+    time_top_atk_all_season=time_top_atk_last_gw+timedelta(hours=24)
+    time_bottom_atk_all_season=time_top_atk_all_season+timedelta(hours=2)
+    time_top_def_all_season=time_bottom_atk_all_season+timedelta(hours=2)
+    time_bottom_def_all_season=time_top_def_all_season+timedelta(hours=2)
+    post_on_time(time_top_atk_all_season,'top_atk_all_season')
+    post_on_time(time_bottom_atk_all_season,'bottom_atk_all_season')
+    post_on_time(time_top_def_all_season,'top_def_all_season')
+    post_on_time(time_bottom_def_all_season,'bottom_def_all_season')
 
-# injury updates:
-teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
-teams_short_names=dict(zip(teams['name'],teams['short_name']))
-map=dict(zip(teams['id'],teams['name']))
-map=pd.DataFrame(map,index=[0])
-num_gameweek=get_num_gw()
+    # lineups & goal alerts
+    new_games=get_new_games()
+    if len(new_games)>0:
+        print('lineups are processing')
+        subprocess.run(["python","confirmed_lineups.py"])
+        print('lineups are posted and goal alerts will begin processing')
+        subprocess.run(["python", "goal_alerts.py"])
+        return 
 
-with open('data.json', 'r') as file:
-    saved_data = json.load(file)
-old_stats=pd.DataFrame(saved_data['elements'])
-new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
-old=prepare(old_stats)
-new=prepare(new_stats)
+    # injury updates:
+    teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
+    teams_short_names=dict(zip(teams['name'],teams['short_name']))
+    map=dict(zip(teams['id'],teams['name']))
+    map=pd.DataFrame(map,index=[0])
+    num_gameweek=get_num_gw()
 
-conditions=new[['chance_of_playing_next_round','news']]!=old[['chance_of_playing_next_round','news']]
-first_condition=new[conditions['chance_of_playing_next_round']]
-second_condition=new[conditions['news']]
-players = pd.concat([first_condition, second_condition], axis=0, ignore_index=True)
-players = players.drop_duplicates()
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open('data.json', 'r') as file:
+        saved_data = json.load(file)
+    old_stats=pd.DataFrame(saved_data['elements'])
+    new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
+    old=prepare(old_stats)
+    new=prepare(new_stats)
 
-if len(players)>0:
-    tweet_text=df_to_text(players,num_gameweek)
-    post(tweet_text)
-    print(f'posted an update at {current_time}')
-else:
-    print(f'theres no post at {current_time}')
+    conditions=new[['chance_of_playing_next_round','news']]!=old[['chance_of_playing_next_round','news']]
+    first_condition=new[conditions['chance_of_playing_next_round']]
+    second_condition=new[conditions['news']]
+    players = pd.concat([first_condition, second_condition], axis=0, ignore_index=True)
+    players = players.drop_duplicates()
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if len(players)>0:
+        tweet_text=df_to_text(players,num_gameweek)
+        post(tweet_text)
+        print(f'posted an update at {current_time}')
+    else:
+        print(f'theres no post at {current_time}')
+
+
+if __name__=="__main__":
+    main()
