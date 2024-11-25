@@ -222,6 +222,7 @@ def post(tweet_text):
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
     last_tweet = client.create_tweet(text=tweet_text)
+    time.sleep(2)
     return last_tweet,message_id,message_text
 
 def post_reply(last_tweet,tweet_text):
@@ -286,7 +287,6 @@ else:
 last_goals,last_pen,no_assist,no_save,cnt,rc={},{},{},{},0,''
 new_gw=live_gws(num_gw,upcoming_games)
 # set of matches begins
-
 while True:
     old_gw=new_gw
     time.sleep(10)
@@ -316,6 +316,8 @@ while True:
             continue
         old=prepare_stats(id,old_gw)
         new=prepare_stats(id,new_gw)
+        if(len(old)==0 or len(new)==0):
+            continue
         players=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
         goals=df_to_text('goals_scored')
         assists=df_to_text('assists')
