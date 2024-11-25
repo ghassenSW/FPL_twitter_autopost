@@ -10,7 +10,8 @@ import os
 from collections import defaultdict
 
 def url_to_df(url,key=None):
-  while True:
+  time_of_trying=0
+  while time_of_trying<=3600:
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -21,6 +22,7 @@ def url_to_df(url,key=None):
         return df
     else:
         time.sleep(60)
+        time_of_trying+=60
         print(f"Error: {response.status_code}")
 
 def get_num_gw():
