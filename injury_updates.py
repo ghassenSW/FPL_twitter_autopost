@@ -36,7 +36,7 @@ def get_num_gw():
 
 def prepare(df):
   df['full_name']=df['first_name']+' '+df['second_name']
-  df['team']=df['team'].map(map.iloc[0])
+  df['team']=df['team'].map(my_map.iloc[0])
   df=df[['chance_of_playing_next_round','team','full_name','news']]
   df.loc[:,'chance_of_playing_next_round']=df.loc[:,'chance_of_playing_next_round'].fillna(101)
   df.loc[:,'news']=df.loc[:,'news'].fillna('')
@@ -188,8 +188,8 @@ def main():
     # injury updates:
     teams=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','teams')
     teams_short_names=dict(zip(teams['name'],teams['short_name']))
-    map=dict(zip(teams['id'],teams['name']))
-    map=pd.DataFrame(map,index=[0])
+    my_map=dict(zip(teams['id'],teams['name']))
+    my_map=pd.DataFrame(my_map,index=[0])
     num_gameweek=get_num_gw()
 
     with open('data.json', 'r') as file:
