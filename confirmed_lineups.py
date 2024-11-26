@@ -41,15 +41,6 @@ def get_new_games():
   games=[game%10 for game in new_games if game not in old_games]
   return games
 
-def get_league_id(league_short_name):
-    conn.request("GET", "/football-get-all-leagues-with-countries", headers=headers)
-    res = conn.getresponse()
-    data = res.read()
-    decoded_dict = json.loads(data.decode('utf-8'))
-    df=pd.DataFrame(decoded_dict['response']['leagues'])
-    league_id=df[df['ccode']==league_short_name]['leagues'].iloc[0][0]['id']
-    return league_id
-
 def get_id_of_match(league_id,num_gw,num_game):
     row=(num_gw-1)*10+num_game
     conn.request("GET", f"/football-get-all-matches-by-league?leagueid={league_id}", headers=headers)
@@ -137,13 +128,11 @@ headers = {
     'x-rapidapi-key': X_RAPIDAPI_KEY,
     'x-rapidapi-host': "free-api-live-football-data.p.rapidapi.com"
 }
-league_id=get_league_id('ENG')
 
 num_gw=get_num_gw()-1
 new_games=get_new_games()
-new_games=[0]
 for game in new_games:
-    match_id=get_id_of_match(league_id,num_gw,game)
+    match_id=get_id_of_match(47,num_gw,game)
     home_lineup,home_team=get_home_lineup(match_id)
     away_lineup,away_team=get_away_lineup(match_id)
     if (len(home_lineup)==0) or (len(away_lineup)==0):
