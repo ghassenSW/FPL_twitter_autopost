@@ -180,9 +180,12 @@ new_games=get_new_games()
 if len(new_games)>0:
     print('lineups are processing')
     subprocess.run(["python","confirmed_lineups.py"])
-    print('lineups are posted and most captained will begin processing')
-    subprocess.run(["python","most_captained.py"])
-    print('most captained are posted and goal alerts will begin processing')
+    if new_games[0]==0:
+        print('lineups are posted and most captained will begin processing')
+        subprocess.run(["python","most_captained.py"])
+        print('most captained are posted and goal alerts will begin processing')
+    else:
+        print('lineups are posted and goal alerts will begin processing')
     subprocess.run(["python", "goal_alerts.py"])
 
 # injury updates:
