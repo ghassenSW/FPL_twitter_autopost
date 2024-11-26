@@ -432,14 +432,16 @@ gw_matches=prepare(num_gw)
 
 # confirmed bonuses begin
 if num_of_match==len(gw_matches)-1:
-    time.sleep(9000)
+    time.sleep(7200)
+    gw_matches=prepare(num_gw)
     last_day=gw_matches.iloc[num_of_match]['day']
     bonuses=prepare_bonuses(gw_matches,last_day)
     bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
     print(bonuses_text)
     post_bonuses(bonuses_text)
 elif gw_matches.iloc[num_of_match]['day']!=gw_matches.iloc[num_of_match+1]['day']:
-    time.sleep(9000)
+    time.sleep(7200)
+    gw_matches=prepare(num_gw)
     last_day=gw_matches.iloc[num_of_match]['day']
     bonuses=prepare_bonuses(gw_matches,last_day)
     bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
