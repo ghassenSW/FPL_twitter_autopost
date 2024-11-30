@@ -57,6 +57,7 @@ def prepare(num_gw,pages):
     df = pd.DataFrame(list(captains.items()), columns=['player', 'captained_by'])
     df=df.sort_values(by='captained_by',ascending=False)
     df['prc']=(df['captained_by']/number_of_managers)*100
+    df=df.iloc[:10]
     return df
 
 def post(tweet_text):
