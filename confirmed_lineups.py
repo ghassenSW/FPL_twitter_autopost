@@ -129,11 +129,9 @@ headers = {
     'x-rapidapi-host': "free-api-live-football-data.p.rapidapi.com"
 }
 
-num_gw=get_num_gw()-1
+num_gw=get_num_gw()
 new_games=get_new_games()
 for game in new_games:
-    if game==0:
-      num_gw+=1
     match_id=get_id_of_match(47,num_gw,game)
     home_lineup,home_team=get_home_lineup(match_id)
     away_lineup,away_team=get_away_lineup(match_id)
