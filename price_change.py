@@ -158,7 +158,7 @@ old_stats=pd.DataFrame(data['elements'])
 old=prepare(old_stats)
 
 while True:
-    time.sleep(60)
+    time.sleep(200)
 
     new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
     new=prepare(new_stats)
