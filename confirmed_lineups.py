@@ -139,5 +139,6 @@ for game in new_games:
        continue
     text=make_final_text(home_team,away_team,home_lineup,away_lineup)
     post(text)
+    print('posted\n',text)
     break
     
