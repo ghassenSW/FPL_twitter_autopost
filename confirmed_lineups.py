@@ -115,8 +115,10 @@ def post(tweet_text):
 
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
-    last_tweet = client.create_tweet(text=text)
-
+    try:
+      last_tweet = client.create_tweet(text=text)
+    except Exception as e:
+       print(e)
 
 teams_short_names={'Arsenal':'ARS','Chelsea':'CHE','Brentford':'BRE','AFC Bournemouth':'BOU','Crystal Palace':'CRY','Fulham':'FUL','West Ham United':'WHU','Everton':'EVE','Wolverhampton Wanderers':'WOL','Southampton':'SOU','Brighton & Hove Albion':'BHA','Manchester City':'MCI','Liverpool':'LIV','Aston Villa':'AVL','Manchester United':'MUN','Leicester City':'LEI','Nottingham Forest':'NFO','Newcastle United':'NEW','Tottenham Hotspur':'TOT','Ipswich Town':'IPS'}
 
