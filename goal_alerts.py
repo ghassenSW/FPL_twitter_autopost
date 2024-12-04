@@ -221,7 +221,10 @@ def post(tweet_text):
 
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
-    last_tweet = client.create_tweet(text=tweet_text)
+    try:
+        last_tweet = client.create_tweet(text=tweet_text)
+    except Exception as e:
+        print(e)
     time.sleep(2)
     return last_tweet,message_id,message_text
 
@@ -236,9 +239,10 @@ def post_reply(last_tweet,tweet_text):
 
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                         access_token=access_token, access_token_secret=access_token_secret)
-    
-    tweet = client.create_tweet(text=tweet_text, in_reply_to_tweet_id=last_tweet[0].data['id'])
-        
+    try:
+        tweet = client.create_tweet(text=tweet_text, in_reply_to_tweet_id=last_tweet[0].data['id'])
+    except Exception as e:
+        print(e)
     new_message=last_tweet[3]+'\n\n'+tweet_text
     edit_params = {'chat_id': CHANNEL_ID,'message_id': last_tweet[1],'text': new_message}
     new_url = f'https://api.telegram.org/bot{TOKEN}/editMessageText'
