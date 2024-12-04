@@ -74,11 +74,15 @@ def post(tweet_text):
     telegram = requests.post(url, params=params)
     client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
                           access_token=access_token, access_token_secret=access_token_secret)
-    tweet = client.create_tweet(text=tweet_text)
-
+    try:
+        tweet = client.create_tweet(text=tweet_text)
+    except Exception as e:
+        print(e)
+        
 num_gw=get_num_gw()
 players=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','elements')
 players=players[['id','web_name']]
 df=prepare(num_gw,1000)
 text=df_to_text(df,num_gw,1000)
 post(text)
+print('posted tweet:\n',text)
