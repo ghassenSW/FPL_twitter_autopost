@@ -100,11 +100,17 @@ def post(tweet_text):
                         access_token=access_token, access_token_secret=access_token_secret)
 
     tweets=split_text_into_tweets(tweet_text)
-    last_tweet = client.create_tweet(text=tweets[0])
+    try: 
+        last_tweet = client.create_tweet(text=tweets[0])
+    except Exception as e:
+        print(e)
     print(f"Posted tweet:--------------------------------------------------------------------------------------\n{tweets[0]}")
     for tweet in tweets[1:]:
         time.sleep(10)
-        last_tweet = client.create_tweet(text=tweet, in_reply_to_tweet_id=last_tweet.data['id'])
+        try:
+            last_tweet = client.create_tweet(text=tweet, in_reply_to_tweet_id=last_tweet.data['id'])
+        except Exception as e:
+            print(e)
         print(f"Posted tweet in thread:------------------------------------------------------------------------\n{tweet}")
 
 def get_new_games():
