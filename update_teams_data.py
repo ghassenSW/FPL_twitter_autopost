@@ -10,6 +10,8 @@ import time
 from datetime import datetime
 import sys
 import ScraperFC as sfc
+from pymongo import MongoClient
+
 
 
 sys.path.append('./src')
@@ -62,6 +64,12 @@ def prepare_sc(match_id):
       new_df.index=df.index
       df=pd.concat([df,pd.DataFrame(new_df)],axis=1)
   return df
+
+MONGODB_URI=os.getenv('MONGODB_URI')
+client = MongoClient(MONGODB_URI)
+db = client['my_database']
+collection = db['fpl_data']
+teams_stats_db=db['teams_stats']
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 REPO_NAME = 'ghassenSW/FPL_twitter_autopost'
@@ -129,6 +137,11 @@ new_sheet=pd.concat(new_sheet)
 new_sheet=new_sheet.sort_values(['GW'])
 df[year_fb]=new_sheet
 
+data=df[year_fb]
+data.reset_index(inplace=True)
+records = data.to_dict(orient='records')
+teams_stats_db.delete_many({})
+teams_stats_db.insert_many(records)
 excel_buffer = io.BytesIO()
 
 with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
