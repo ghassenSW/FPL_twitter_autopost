@@ -88,6 +88,26 @@ for event in events:
     new_sheet.append(stats)
   except Exception as e:
     continue
+avl_mun = {
+    "season": ["24/25"],
+    "GW": [7],
+    "team H": ["Aston Villa"],
+    "team A": ["Manchester United"],
+    "Goals H": [0],
+    "Goals A": [0],
+    "xG H": [0.5],
+    "xG A": [0.56],
+    "Shots H": [11],
+    "Shots A": [10],
+    "SiB H": [6],
+    "SiB A": [4],
+    "SoT H": [1],
+    "SoT A": [4],
+    "BC H": [1],
+    "BC A": [4],
+}
+avl_mun_df=pd.DataFrame(avl_mun)
+new_sheet.append(avl_mun_df)
 new_sheet=pd.concat(new_sheet)
 new_sheet=new_sheet.sort_values(['GW'])
 df[year_fb]=new_sheet
