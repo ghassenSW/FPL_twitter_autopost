@@ -85,11 +85,28 @@ for event in events:
   id=event['id']
   try:
     stats=prepare_sc(id)
+    column_types = {
+        "GW": "int",
+        "team H": "string",
+        "team A": "string",
+        "Goals H": "int",
+        "Goals A": "int",
+        "xG H": "float",
+        "xG A": "float",
+        "Shots H": "int",
+        "Shots A": "int",
+        "SiB H": "int",
+        "SiB A": "int",
+        "SoT H": "int",
+        "SoT A": "int",
+        "BC H": "int",
+        "BC A": "int",
+    }
+    stats = stats.astype(column_types)
     new_sheet.append(stats)
   except Exception as e:
     continue
 avl_mun = {
-    "season": ["24/25"],
     "GW": [7],
     "team H": ["Aston Villa"],
     "team A": ["Manchester United"],
