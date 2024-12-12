@@ -29,5 +29,6 @@ jobs:
       - name: Run update_teams_data.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
           python update_teams_data.py
