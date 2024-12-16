@@ -37,7 +37,6 @@ def get_num_gw():
 def prepare(df):
   df['full_name']=df['first_name']+' '+df['second_name']
   df['team']=df['team'].map(my_map.iloc[0])
-  df=df[['chance_of_playing_next_round','team','full_name','news']]
   df.loc[:,'chance_of_playing_next_round']=df.loc[:,'chance_of_playing_next_round'].fillna(101)
   df.loc[:,'news']=df.loc[:,'news'].fillna('')
   return df
@@ -62,6 +61,9 @@ def split_text_into_tweets(text, limit=280):
         tweets[-1]=f_tweet
         tweets.append(s_tweet)
     return tweets
+
+def condition(row):
+  return row['id'] in ids
 
 def df_to_text(players,gw):
     tweet_text='🚨 Injury Updates\n\n'
@@ -208,11 +210,17 @@ new_stats=url_to_df('https://fantasy.premierleague.com/api/bootstrap-static/','e
 old=prepare(old_stats)
 new=prepare(new_stats)
 
+ids=list(old['id'])
+new=new[new.apply(condition,axis=1)]
+old=old.reset_index(drop=True)
+new=new.reset_index(drop=True)
 conditions=new[['chance_of_playing_next_round','news']]!=old[['chance_of_playing_next_round','news']]
 first_condition=new[conditions['chance_of_playing_next_round']]
 second_condition=new[conditions['news']]
 players = pd.concat([first_condition, second_condition], axis=0, ignore_index=True)
 players = players.drop_duplicates()
+players=players[['chance_of_playing_next_round','team','full_name','news']]
+players=players.astype({'chance_of_playing_next_round':'int'})
 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 if len(players)>0:
