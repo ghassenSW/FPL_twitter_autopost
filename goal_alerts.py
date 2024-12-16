@@ -223,10 +223,10 @@ def post(tweet_text):
                         access_token=access_token, access_token_secret=access_token_secret)
     try:
         last_tweet = client.create_tweet(text=tweet_text)
+        time.sleep(2)
+        return last_tweet,message_id,message_text
     except Exception as e:
         print(e)
-    time.sleep(2)
-    return last_tweet,message_id,message_text
 
 def post_reply(last_tweet,tweet_text):
     bearer_token = os.getenv('BEARER_TOKEN')
