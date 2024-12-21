@@ -256,7 +256,7 @@ def get_upcoming_games():
   present_fixtures['kickoff_time']=pd.to_datetime(present_fixtures['kickoff_time'])
   present_fixtures['kickoff_time']=present_fixtures['kickoff_time']-pd.to_timedelta(1, unit='h')
   current_time=pd.Timestamp.now(tz='UTC')
-  past_time=current_time-pd.to_timedelta(40, unit='m')
+  past_time=current_time-pd.to_timedelta(90, unit='m')
   new_games=present_fixtures[present_fixtures['kickoff_time']<current_time].index.values.tolist()
   old_games=present_fixtures[present_fixtures['kickoff_time']<past_time].index.values.tolist()
   games=[game%10 for game in new_games if game not in old_games]
