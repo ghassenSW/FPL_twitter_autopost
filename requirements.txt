@@ -14,4 +14,6 @@ tzdata==2024.2
 urllib3==2.2.3
 PyGithub==1.56.0
 pymongo==4.10.1
+scipy==1.10.1
+fuzzywuzzy==0.18.0
 ScraperFC
