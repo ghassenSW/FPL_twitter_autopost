@@ -176,5 +176,7 @@ for id in ids:
 all_stats=all_stats[['season','id','web_name','full_name','num_gw','team','opp_team','H/A','minutes_played','goals','xG','assists','xA','OG','shots','bc','chances_created','bc_created','sot','hit_wood_work','total_cross']]
 
 records = all_stats.to_dict(orient='records')
-players_stats_db.delete_many({})
-players_stats_db.insert_many(records)
+for record in records:
+  exists=players_stats_db.find_one(record)
+  if not exists:
+    players_stats_db.insert_one(record)
