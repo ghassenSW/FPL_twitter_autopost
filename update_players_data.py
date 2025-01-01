@@ -134,7 +134,7 @@ all_stats=all_stats.sort_values(['num_gw'])
 team_players_sc={}
 for team in fpl_teams:
   stats=all_stats[all_stats['team']==team]
-  players_sc=list(set(stats['name']))
+  players_sc=list(set(stats['full_name']))
   team_players_sc[team]=players_sc
 
 # get team players in fpl
