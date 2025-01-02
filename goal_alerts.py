@@ -135,6 +135,8 @@ def prepare_bonuses(fixtures,last_day):
     for index,row in fixtures.iterrows():
         bonus_a=row['stats'][8]['a']
         bonus_h=row['stats'][8]['h']
+        if not bonus_h and not bonus_a:
+          return {}
         d={}
         game=teams_short_names[row['team_h']].iloc[0]+teams_short_names[row['team_a']].iloc[0]
         for bonus in bonus_a:
@@ -424,7 +426,7 @@ while True:
 
     if len(new_gw)==0:
         print('full time alert of this set will be posted 15 mins later')
-        time.sleep(900)
+        time.sleep(60)
         num_of_set=get_num_of_set(num_gw,num_of_match)
         set_of_matches=current_set(num_gw,num_of_set)
         full_time_alert_text=full_time_alert(set_of_matches,num_gw)
@@ -436,22 +438,28 @@ print(f'set of num_of_match={num_of_match} ends, confirmed Bonuses will be  afte
 gw_matches=prepare(num_gw)
 
 # confirmed bonuses begin
+time.sleep(3600)
 if num_of_match==len(gw_matches)-1:
-    time.sleep(7200)
-    gw_matches=prepare(num_gw)
-    last_day=gw_matches.iloc[num_of_match]['day']
-    bonuses=prepare_bonuses(gw_matches,last_day)
-    bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
-    print(bonuses_text)
-    post_bonuses(bonuses_text)
+    while True:
+      time.sleep(60)
+      gw_matches=prepare(num_gw)
+      last_day=gw_matches.iloc[num_of_match]['day']
+      bonuses=prepare_bonuses(gw_matches,last_day)
+      if bonuses:
+        bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
+        print(bonuses_text)
+        post_bonuses(bonuses_text)
+        break
 elif gw_matches.iloc[num_of_match]['day']!=gw_matches.iloc[num_of_match+1]['day']:
-    time.sleep(7200)
+    time.sleep(60)
     gw_matches=prepare(num_gw)
     last_day=gw_matches.iloc[num_of_match]['day']
     bonuses=prepare_bonuses(gw_matches,last_day)
-    bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
-    print(bonuses_text)
-    post_bonuses(bonuses_text)
+    if bonuses:
+      bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
+      print(bonuses_text)
+      post_bonuses(bonuses_text)
+      break
 # confirmed bonuses end
 
 print(f'set of matches {upcoming_games} ends')
