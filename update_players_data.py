@@ -30,6 +30,15 @@ db = client['my_database']
 collection = db['fpl_data']
 players_stats_db=db['players_stats']
 
+def position_func(n):
+  if n==1:
+    return 'GKP'
+  elif n==2:
+    return 'DEF'
+  elif n==3:
+    return 'MID'
+  elif n==4:
+    return 'FWD'
 
 def mapping(list_a, list_b):
     if len(list_a) != len(list_b):
@@ -144,6 +153,8 @@ players['team']=players['team'].apply(lambda x:fpl_teams[x-1])
 players['full_name']=players['first_name']+' '+players['second_name']
 players_id=dict(zip(players['id'],players['full_name']))
 id_web_name=dict(zip(players['id'],players['web_name']))
+players['element_type']=players['element_type'].apply(lambda x:position_func(x))
+id_position=dict(zip(players['id'],players['element_type']))
 ids=players['id']
 for id in ids:
   player=url_to_df(f'https://fantasy.premierleague.com/api/element-summary/{id}/','history')
@@ -165,15 +176,30 @@ all_stats['full_name']=all_stats['full_name'].apply(lambda x:sc_fpl_players[x])
 for id in ids:
   player=url_to_df(f'https://fantasy.premierleague.com/api/element-summary/{id}/','history')
   player=player[player['minutes']>0]
+  player_name=players_id[id]
+  web_name=id_web_name[id]
+  position=id_position[id]
   if len(player)>0:
-    player_name=players_id[id]
-    web_name=id_web_name[id]
     for index,row in player.iterrows():
-      all_stats.loc[(all_stats['full_name'] == player_name) & (all_stats['num_gw'] == row['round']), 'assists'] =row['assists']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'assists']=row['assists']
       all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'web_name']=web_name
       all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'id']=id
-
-all_stats=all_stats[['season','id','web_name','full_name','num_gw','team','opp_team','H/A','minutes_played','goals','xG','assists','xA','OG','shots','bc','chances_created','bc_created','sot','hit_wood_work','total_cross']]
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'position']=position
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'total_points']=row['total_points']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'kickoff_time']=row['kickoff_time']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'penalties_saved']=row['penalties_saved']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'penalties_missed']=row['penalties_missed']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'CS']=row['clean_sheets']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'goals_conceded']=row['goals_conceded']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'yellow_cards']=row['yellow_cards']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'red_cards']=row['red_cards']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'saves']=row['saves']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'bonus']=row['bonus']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'bps']=row['bps']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'value']=row['value']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_in']=row['transfers_in']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_out']=row['transfers_out']
+      all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'selected']=row['selected']
 
 records = all_stats.to_dict(orient='records')
 for record in records:
