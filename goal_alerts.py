@@ -214,14 +214,15 @@ def post(tweet_text):
 
     telegram_text=tweet_text.replace('|', "")
     params = {'chat_id': CHANNEL_ID,'text': telegram_text}
-    telegram = requests.post(url, params=params)
-    message_data = telegram.json()
-    message_id = message_data['result']['message_id']
-    message_text=message_data['result']['text']
 
-    client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
-                        access_token=access_token, access_token_secret=access_token_secret)
     try:
+        telegram = requests.post(url, params=params)
+        message_data = telegram.json()
+        message_id = message_data['result']['message_id']
+        message_text=message_data['result']['text']
+    
+        client = tweepy.Client(bearer_token=bearer_token, consumer_key=consumer_key, consumer_secret=consumer_secret,
+                        access_token=access_token, access_token_secret=access_token_secret)
         last_tweet = client.create_tweet(text=tweet_text)
         time.sleep(2)
         return last_tweet,message_id,message_text
