@@ -77,8 +77,12 @@ def get_away_lineup(match_id):
     else:
        return []
 
-def lineup_to_text(df):
-  text=str(df.iloc[0,-2])+' | '
+def lineup_to_text(df,team):
+  text=''
+  if str(df.iloc[0,-2])=='nan':
+    text+=teams_goalkeepers[team]
+  else:
+    text+=str(df.iloc[0,-2])+' | '
   for i in range(1,4):
     for index,row in df[df['usualPlayingPositionId']==i].iterrows():
       text+=row['lastName']+' , '
@@ -92,10 +96,10 @@ def make_final_text(home_team,away_team,home_lineup,away_lineup):
     away_short_name=teams_short_names[away_team]
     match_tag=f'#{home_short_name}{away_short_name}\n'
     match_tag+='\n'+emoji[home_short_name]+' '
-    home_lineup_text=lineup_to_text(home_lineup)
+    home_lineup_text=lineup_to_text(home_lineup,home_team)
     match_tag+=home_lineup_text
     match_tag+='\n\n'+emoji[away_short_name]+' '
-    away_lineup_text=lineup_to_text(away_lineup)
+    away_lineup_text=lineup_to_text(away_lineup,away_team)
     match_tag+=away_lineup_text
     match_tag+=f'\n\n#FPL #GW{num_gw}'
     return match_tag
@@ -119,6 +123,29 @@ def post(tweet_text):
       last_tweet = client.create_tweet(text=text)
     except Exception as e:
        print(e)
+
+teams_goalkeepers = {
+    'Arsenal': 'David Raya',
+    'Chelsea': 'Robert Sánchez',
+    'Brentford': 'Mark Flekken',
+    'AFC Bournemouth': 'Neto',
+    'Crystal Palace': 'Dean Henderson',
+    'Fulham': 'Bernd Leno',
+    'West Ham United': 'Łukasz Fabiański',
+    'Everton': 'Jordan Pickford',
+    'Wolverhampton Wanderers': 'José Sá',
+    'Brighton & Hove Albion': 'Bart Verbruggen',
+    'Manchester City': 'Stefan Ortega Moreno',
+    'Liverpool': 'Alisson Becker',
+    'Aston Villa': 'Emiliano Martínez',
+    'Manchester United': 'André Onana',
+    'Nottingham Forest': 'Matz Sels',
+    'Newcastle United': 'Martin Dúbravka',
+    'Tottenham Hotspur': 'Fraser Forster',
+    'Leicester City': 'Jakub Stolarczyk',
+    'Ipswitch Town': 'Arijanet Muric',
+    'Southampton': 'Aaron Ramsdale'
+}
 
 teams_short_names={'Arsenal':'ARS','Chelsea':'CHE','Brentford':'BRE','AFC Bournemouth':'BOU','Crystal Palace':'CRY','Fulham':'FUL','West Ham United':'WHU','Everton':'EVE','Wolverhampton Wanderers':'WOL','Southampton':'SOU','Brighton & Hove Albion':'BHA','Manchester City':'MCI','Liverpool':'LIV','Aston Villa':'AVL','Manchester United':'MUN','Leicester City':'LEI','Nottingham Forest':'NFO','Newcastle United':'NEW','Tottenham Hotspur':'TOT','Ipswich Town':'IPS'}
 
