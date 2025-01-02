@@ -117,8 +117,6 @@ for event in events: #380 events
   sc_stats['opp_team']=sc_stats['teamName'].apply(lambda x:teams[0] if x==teams[1] else teams[1])
   sc_stats['num_gw']=num_gw
   sc_stats=sc_stats.fillna(0)
-  match_tag=teams_short_names[event['homeTeam']['name']]+teams_short_names[event['awayTeam']['name']]
-  sc_stats['match_tag']=match_tag
   sc_stats['season']=year_sc
   sc_stats['H/A']=sc_stats['opp_team'].apply(lambda x: 'A' if x==event['homeTeam']['name'] else 'H')
   sc_stats['teamName']=sc_stats['teamName'].apply(lambda x:teams_sc_fpl[x])
@@ -129,11 +127,11 @@ for event in events: #380 events
         sc_stats[col]=0
     sc_stats=sc_stats[sc_stats['minutesPlayed']>0]
     sc_stats['shots']=sc_stats['shotOffTarget']+sc_stats['blockedScoringAttempt']+sc_stats['onTargetScoringAttempt']
-    sc_stats=sc_stats[['season','num_gw','name','teamName','opp_team','H/A','match_tag','minutesPlayed','goals','expectedGoals','goalAssist','expectedAssists','ownGoals','shots','bigChanceMissed','keyPass','bigChanceCreated','onTargetScoringAttempt','hitWoodwork','totalCross']]
-    sc_stats.columns=['season','num_gw','full_name','team','opp_team','H/A','tag','minutes_played','goals','xG','assists','xA','OG','shots','bc','chances_created','bc_created','sot','hit_wood_work','total_cross']
+    sc_stats=sc_stats[['season','num_gw','name','teamName','opp_team','H/A','minutesPlayed','goals','expectedGoals','goalAssist','expectedAssists','ownGoals','shots','bigChanceMissed','keyPass','bigChanceCreated','onTargetScoringAttempt','hitWoodwork','totalCross']]
+    sc_stats.columns=['season','num_gw','full_name','team','opp_team','H/A','minutes_played','goals','xG','assists','xA','OG','shots','bc','chances_created','bc_created','sot','hit_wood_work','total_cross']
     all_stats.append(sc_stats)
   except Exception as e:
-    print(match_tag,':',e)
+    print(e)
     continue
 all_stats=pd.concat(all_stats)
 all_stats=all_stats.sort_values(['num_gw'])
