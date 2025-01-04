@@ -459,7 +459,6 @@ elif gw_matches.iloc[num_of_match]['day']!=gw_matches.iloc[num_of_match+1]['day'
       bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
       print(bonuses_text)
       post_bonuses(bonuses_text)
-      break
 # confirmed bonuses end
 
 print(f'set of matches {upcoming_games} ends')
