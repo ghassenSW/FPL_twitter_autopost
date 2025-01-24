@@ -155,13 +155,16 @@ players['element_type']=players['element_type'].apply(lambda x:position_func(x))
 id_position=dict(zip(players['id'],players['element_type']))
 ids=players['id']
 for id in ids:
-  player=url_to_df(f'https://fantasy.premierleague.com/api/element-summary/{id}/','history')
-  player=player[player['minutes']>0]
-  if len(player)>0:
-    player_name=players_id[id]
-    for index,row in player.iterrows():
-      player_team=get_player_team(row['round'],fpl_teams[row['opponent_team']-1])
-      team_players_fpl.setdefault(player_team, set()).add(player_name)
+  try:
+    player=url_to_df(f'https://fantasy.premierleague.com/api/element-summary/{id}/','history')
+    player=player[player['minutes']>0]
+    if len(player)>0:
+      player_name=players_id[id]
+      for index,row in player.iterrows():
+        player_team=get_player_team(row['round'],fpl_teams[row['opponent_team']-1])
+        team_players_fpl.setdefault(player_team, set()).add(player_name)
+  except Exception as e:
+    print(players[players['id']==id]['web_name'].iloc[0])
 
 # mapping sc players to fpl 
 sc_fpl_players={}
@@ -199,6 +202,7 @@ for id in ids:
       all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_out']=row['transfers_out']
       all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'selected']=row['selected']
 
+# fill the Mongodb dataset
 records = all_stats.to_dict(orient='records')
 for record in records:
   exists=players_stats_db.find_one(record)
