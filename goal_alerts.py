@@ -446,7 +446,6 @@ if num_of_match==len(gw_matches)-1:
     bonuses_text=df_to_bonus_text(bonuses,num_gw,last_day)
     print(bonuses_text)
     post_bonuses(bonuses_text)
-    break
 elif gw_matches.iloc[num_of_match]['day']!=gw_matches.iloc[num_of_match+1]['day']:
     gw_matches=prepare(num_gw)
     last_day=gw_matches.iloc[num_of_match]['day']
