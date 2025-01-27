@@ -202,6 +202,7 @@ for id in ids:
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_in']=row['transfers_in']
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_out']=row['transfers_out']
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'selected']=row['selected']
+        all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'opta_code']=row['opta_code']
   except Exception as e:
     print(players[players['id']==id]['web_name'].iloc[0])
 
