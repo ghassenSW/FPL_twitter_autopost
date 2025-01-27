@@ -208,6 +208,13 @@ for id in ids:
 # fill the Mongodb dataset
 records = all_stats.to_dict(orient='records')
 for record in records:
-  exists=players_stats_db.find_one(record)
+  check={
+    'r_season':record['season'],
+    'r_num_gw':record['num_gw'],
+    'r_full_name':record['full_name'],
+    'r_team':record['team'],
+    'r_opp_team':record['opp_team']
+  }
+  exists=players_stats_db.find_one(check)
   if not exists:
     players_stats_db.insert_one(record)
