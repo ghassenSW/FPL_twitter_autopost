@@ -151,6 +151,7 @@ players['team']=players['team'].apply(lambda x:fpl_teams[x-1])
 players['full_name']=players['first_name']+' '+players['second_name']
 players_id=dict(zip(players['id'],players['full_name']))
 id_web_name=dict(zip(players['id'],players['web_name']))
+id_image=dict(zip(players['id'],players['opta_code']))
 players['element_type']=players['element_type'].apply(lambda x:position_func(x))
 id_position=dict(zip(players['id'],players['element_type']))
 ids=players['id']
@@ -181,6 +182,7 @@ for id in ids:
     player_name=players_id[id]
     web_name=id_web_name[id]
     position=id_position[id]
+    opta_code=id_image[id]
     if len(player)>0:
       for index,row in player.iterrows():
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'assists']=row['assists']
@@ -202,7 +204,7 @@ for id in ids:
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_in']=row['transfers_in']
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'transfers_out']=row['transfers_out']
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'selected']=row['selected']
-        all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'opta_code']=row['opta_code']
+        all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'opta_code']=opta_code
   except Exception as e:
     print('second error',players[players['id']==id]['web_name'].iloc[0])
 
