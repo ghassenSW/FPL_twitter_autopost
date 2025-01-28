@@ -164,7 +164,7 @@ for id in ids:
         player_team=get_player_team(row['round'],fpl_teams[row['opponent_team']-1])
         team_players_fpl.setdefault(player_team, set()).add(player_name)
   except Exception as e:
-    print(players[players['id']==id]['web_name'].iloc[0])
+    print('first error',players[players['id']==id]['web_name'].iloc[0])
 
 # mapping sc players to fpl 
 sc_fpl_players={}
@@ -204,7 +204,7 @@ for id in ids:
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'selected']=row['selected']
         all_stats.loc[(all_stats['full_name']==player_name) & (all_stats['num_gw']==row['round']),'opta_code']=row['opta_code']
   except Exception as e:
-    print(players[players['id']==id]['web_name'].iloc[0])
+    print('second error',players[players['id']==id]['web_name'].iloc[0])
 
 # fill the Mongodb dataset
 records = all_stats.to_dict(orient='records')
