@@ -212,11 +212,11 @@ for id in ids:
 records = all_stats.to_dict(orient='records')
 for record in records:
   check={
-    'r_season':record['season'],
-    'r_num_gw':record['num_gw'],
-    'r_full_name':record['full_name'],
-    'r_team':record['team'],
-    'r_opp_team':record['opp_team']
+    'season':record['season'],
+    'num_gw':record['num_gw'],
+    'full_name':record['full_name'],
+    'team':record['team'],
+    'opp_team':record['opp_team']
   }
   exists=players_stats_db.find_one(check)
   if not exists:
