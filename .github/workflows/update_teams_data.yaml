@@ -32,3 +32,4 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
           python update_teams_data.py
+          python update_managers_data.py
